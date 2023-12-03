@@ -6,11 +6,11 @@ class NeuralNetwork
     int NNnumber=0;
     string MYname="DEFAULT";
     NeuralNetwork(int inpt,int hiddenL1,int outputs,float min,float max){
-        print("new NN with "+inpt+" inpt and outputs"+outputs+ "and "+hiddenL1+" hidden");
+        //print("new NN with "+inpt+" inpt and outputs"+outputs+ "and "+hiddenL1+" hidden");
         InitNN(inpt,hiddenL1,outputs,min,max);
     }
     NeuralNetwork(string id){
-        print("NN loads from file "+id);
+        //print("NN loads from file "+id);
         loadfromFile(id);
         MYname = id;
     }
@@ -21,28 +21,28 @@ class NeuralNetwork
     }
      array<float> MatMul(array<array<float>> mat,array<float> x)
     {
-        if ((x.length != mat[0].length-1)) print("OH OH len x is"+x.length+ "and mat[0].length is"+mat[0].length);
+        if ((x.length != mat[0].length-1)) {} //print("OH OH len x is"+x.length+ "and mat[0].length is"+mat[0].length);
         array<float> res(mat.length);
-        //print("MAT MUL");
-        //print("Pre FOr"+res.length+" and mat [0] is"+mat[0].length);
+        ////print("MAT MUL");
+        ////print("Pre FOr"+res.length+" and mat [0] is"+mat[0].length);
         for (int i=0;i<mat.length;i++){
             res[i]=0;
             int j=0;
             for (;j<mat[i].length-1;j++){
                 //print(i+") mat "+mat[i][j]+"  Res"+ res[i]);
-                //print("x "+j+" * "+"wheigts "+i+", "+j);
+                ////print("x "+j+" * "+"wheigts "+i+", "+j);
                 res[i]+=mat[i][j]*x[j];
             }
-            //print("bias "+i+", "+j);
+            ////print("bias "+i+", "+j);
             res[i]+=mat[i][j];
 
         }
-        //print("ended FOr"+res.length);
+        ////print("ended FOr"+res.length);
         for (int i=0;i<mat.length;i++){
             res[i] =pseudoTanh(res[i]);// Maths::Sin(res[i]);//
             //print(i+") res "+res[i]);
         }
-        //print("ended other For");
+        ////print("ended other For");
         return res;
     }
     array<array<float>> InitRandomLayer(float max,float min, int inpu,int hiddenUnits)
@@ -87,8 +87,8 @@ class NeuralNetwork
         print(FloatArray2String(neurons));
         int s1 = neurons[0];
         int s2 = neurons[1];
-        print("hidden1 "+s1);
-        print("hidden2 "+s2);
+        //print("hidden1 "+s1);
+        //print("hidden2 "+s2);
         Layer1.resize(s1);
         Layer2.resize(s2);
         for (int i=0;i<Layer1.length;i++)
@@ -106,11 +106,11 @@ class NeuralNetwork
     {
          for (int i=0;i<Layer1.length;i++)
         {
-            print("L1Neuron"+i+")"+FloatArray2String(Layer1[i]));
+            //print("L1Neuron"+i+")"+FloatArray2String(Layer1[i]));
         }
         for (int i=0;i<Layer2.length;i++)
         {
-            print("L2Neuron"+i+")"+FloatArray2String(Layer2[i]));
+            //print("L2Neuron"+i+")"+FloatArray2String(Layer2[i]));
         }
     }
     void saveToFile(string name){
@@ -138,9 +138,9 @@ class NeuralNetwork
         Layer1 = InitRandomLayer(min,max,inpt,hiddenL1);
         Layer2 = InitRandomLayer(min,max,hiddenL1,outputs);
 
-        print("NN initialized");
-        //print("LAYER1\n"+Mat2String(Layer1));
-        //print("LAYER2\n"+Mat2String(Layer2));
+        //print("NN initialized");
+        ////print("LAYER1\n"+Mat2String(Layer1));
+        ////print("LAYER2\n"+Mat2String(Layer2));
     }
     array<float> predict(array<float> inpt)
     {

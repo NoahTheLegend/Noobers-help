@@ -18,7 +18,7 @@ def newDataPoint(oldx):
     mag = sum(x*x)**0.5
     newx = [posx,posy,velx,vely,theta,ink,ink2,mag]
     return newx
-print("opening file")
+//print("opening file")
 data = []
 hashData = {}
 with open("./arrowStats.cfg",'r') as f: #"../../Cache/arrowStats.cfg"
@@ -44,7 +44,7 @@ with open("./arrowStats.cfg",'r') as f: #"../../Cache/arrowStats.cfg"
         else:
             hashData[key]=hashData[key][0],np.array(dataPoints)
         
-print("done")
+//print("done")
 c=0
 BigX = []
 BigY = []
@@ -132,7 +132,7 @@ for h in hashData.keys():
             posY.append(-currentPred[0][1])
             velx.append(currentPred[0][2])
             vely.append(-currentPred[0][3])
-        #print("currentpred : ", currentPred)
+        #//print("currentpred : ", currentPred)
     #for i,position in enumerate(positions[:-1]):
     #    inputBigX.append(np.hstack([position,velocities[i]]))
         
@@ -150,7 +150,7 @@ for h in hashData.keys():
 plt.legend(fontsize=22)
 plt.show()
 #print(clf.coefs_)
-print("SCORE-"*5)
+//print("SCORE-"*5)
 print(clf.score(BigX,BigY))
 print(shots_force)
 print(poly.get_feature_names_out())
@@ -169,7 +169,7 @@ def get_poly_angelscript_equations_strings():
     for thing in range(len(equations)):
         equations[thing] += str(rid.intercept_[thing]) + "+"
     for count, coef in enumerate(coefficients):
-        #print("INLOOP", coef)
+        #//print("INLOOP", coef)
         for i, name in enumerate(poly.get_feature_names()):
             if coef[i] == 0 : #if coef is = 0, then the whole term become zero, hence we can skip this iteration
                 continue

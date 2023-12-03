@@ -55,16 +55,16 @@ array<float> FeedForward(int idx)
 {
 	array<float> pred;
 	if (flagDumped==1) return pred;
-	//print("FEED FORWARD STEP FOR AI"+idx+" IS "+Array2String(pred)+" Mind is a thing"+Minds[idx].MYname);
+	////print("FEED FORWARD STEP FOR AI"+idx+" IS "+Array2String(pred)+" Mind is a thing"+Minds[idx].MYname);
 	//if (nn is null)
 	//			return pred;
-	print("1*******"+idx);
+	//print("1*******"+idx);
 	
-	print("2");
-	print("MINDS IS NULL"+(@Minds[idx]==null));
-	print("3"+Minds[idx].MYname);
+	//print("2");
+	//print("MINDS IS NULL"+(@Minds[idx]==null));
+	//print("3"+Minds[idx].MYname);
 	pred = Minds[idx].predict(static_inpr);
-	print("4");
+	//print("4");
 	return pred;
 }
 float getAIBoolShot(CBlob@ blob,CBlob@ target,Vec2f aimPos,array<float> dists)
@@ -73,7 +73,7 @@ float getAIBoolShot(CBlob@ blob,CBlob@ target,Vec2f aimPos,array<float> dists)
 	bool verbose = false;// (XORRandom(1000)<10) && (idx==argmax(fitnessValues));
 	//printInt("my idx",idx);
 	array<float> ShotWeights = allShotWeights[idx];
-	//print("Shot weights");
+	////print("Shot weights");
 	//print(Array2String(ShotWeights));
 	float bias = ShotWeights[0];
 	float x1 = (1.0*blob.get_u32("fire time"))/(1.0*ArcherParams::shoot_period);
@@ -192,7 +192,7 @@ float getAIAim(CBlob@ blob,CBlob@ target)
 				
 				predictedOutput = predict(inpu[0],inpu[1],inpu[2],inpu[3],inpu[4],inpu[5],inpu[6],inpu[7]);
 				
-				//print("inpu "+Array2String(inpu)+" output "+Array2String(predictedOutput));
+				////print("inpu "+Array2String(inpu)+" output "+Array2String(predictedOutput));
 				for (int k=0;k<4;k++)
 					inpu[k]=predictedOutput[k];
 
@@ -223,8 +223,8 @@ float getAIAim(CBlob@ blob,CBlob@ target)
 	if (verbose and idx == 0)
 	{			
 				string name = blob.getPlayer().getUsername();
-				//print("I'AM "+name+" my score is "+maxim(fitnessValues));
-				//print("Enemy is at "+(x10>0.0 ? "Left" : "Right")+" x9=" + x9);
+				////print("I'AM "+name+" my score is "+maxim(fitnessValues));
+				////print("Enemy is at "+(x10>0.0 ? "Left" : "Right")+" x9=" + x9);
 				array<float> inputLR = 
 				   {
 					   //x1,
@@ -392,7 +392,7 @@ void onRender(CSprite@ this){
 				//			pos1+Vec2f(predictedOutput[0],predictedOutput[1]),
 				//			SColor(0,255,(i%2==0 ? 255 : 0),255));
 
-				//print("inpu "+Array2String(inpu)+" output "+Array2String(predictedOutput));
+				////print("inpu "+Array2String(inpu)+" output "+Array2String(predictedOutput));
 				midP1 = pos1+Vec2f(inpu[0],inpu[1]);
 				for (int k=0;k<4;k++)
 					inpu[k]=predictedOutput[k];
@@ -451,15 +451,15 @@ void onSetPlayer(CBlob@ this, CPlayer@ player)
 		{	
 
 			int idx = myAtoi(player.getUsername());
-			print("epoch:"+epochs+") SETTING PLAYER AI"+idx);
+			//print("epoch:"+epochs+") SETTING PLAYER AI"+idx);
 			NeuralNetwork@ nn;
 			if (Minds[idx]==null and epochs==0){
-				print("Init new NN for "+idx);
+				//print("Init new NN for "+idx);
 				@Minds[idx] = @NeuralNetwork(getBestMindName());
 				Minds[idx].AddNoiseToNetwork(-0.2,0.2);
 			}
 			else
-				print("epoch>0");
+				//print("epoch>0");
 			//FeedForward(idx);
 			getBestWeightsWithNoise(idx);
 			goodArrows[idx]=+idx;
@@ -470,7 +470,7 @@ void onSetPlayer(CBlob@ this, CPlayer@ player)
 f32 onPlayerTakeDamage(CRules@ this, CPlayer@ victim, CPlayer@ attacker, f32 DamageScale)
 {
 	if (attacker !is null && attacker !is victim){
-		print("victim is"+victim.getUsername());
+		//print("victim is"+victim.getUsername());
 		print(attacker.getUsername()+" is the attacker");
 	}
 	return DamageScale;
@@ -502,10 +502,10 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 			{
 				float targetDistance = (hitterBlob.getDamageOwnerPlayer().getBlob().getPosition()-targets[idx]).Length();
 				float multiplier = (targetDistance/(arrowDistance));
-				/*print("arrow distance is "+arrowDistance);
-				print("target distance is "+targetDistance);
-				print("arrow distance is "+multiplier);*/
-				print("AI "+idx+"s arrow was worth "+multiplier);
+				/*//print("arrow distance is "+arrowDistance);
+				//print("target distance is "+targetDistance);
+				//print("arrow distance is "+multiplier);*/
+				//print("AI "+idx+"s arrow was worth "+multiplier);
 				{
 					goodArrows[idx]+=multiplier;
 					if (this.hasTag("dead")){
@@ -523,13 +523,13 @@ int flagDumped = 0;
 void onStateChange(CRules@ this, const u8 oldState)
 {
 	string LastMapName = "Maps/Flat.png";
-	print("GAME IS RUNNING? "+this.isMatchRunning()+", map is Last Map "+(getMap().getMapName()==(LastMapName))+" Map is: -"+getMap().getMapName()+"-");
+	//print("GAME IS RUNNING? "+this.isMatchRunning()+", map is Last Map "+(getMap().getMapName()==(LastMapName))+" Map is: -"+getMap().getMapName()+"-");
     if (this.isMatchRunning() && getMap().getMapName()==LastMapName)
     {
 		if (flagDumped!=0) return;
 		flagDumped=1;
-		print("DUMPING SCORES");
-		print("Minds are "+Minds.length);
+		//print("DUMPING SCORES");
+		//print("Minds are "+Minds.length);
 		epochs++;
         CBlob@[] players;
 		getBlobsByTag("player", @players);
@@ -540,7 +540,7 @@ void onStateChange(CRules@ this, const u8 oldState)
 				int idx = myAtoi(player.getUsername());
 				float gain = (goodArrows[idx])/(1.0+arrowsShot[idx]);
 				fitnessValues[idx] = gain;
-				print("new gain for "+player.getUsername()+" is "+gain);
+				//print("new gain for "+player.getUsername()+" is "+gain);
 				{
 					print(player.getUsername()+" has score "+fitnessValues[idx]);
 					saveNNIfBestOrLoadBestWithNoise(idx,gain);
@@ -572,7 +572,7 @@ void getBestWeights(int idx)
 {	
 	/*printInt("my Atoi",idx);
 	*/
-	print("Load Best Weights in AI"+idx);
+	//print("Load Best Weights in AI"+idx);
 	ConfigFile cfg = ConfigFile();
 	string cost_config_file="../Cache/ArcherWeights.cfg";
 	cfg.loadFile(cost_config_file);
@@ -622,7 +622,7 @@ void dumpLRWeightsIfBestOrLoadBestWithNoise(bool addNoise,int my_idx,float my_sc
 void getBestWeightsWithNoise(int idx)
 {	
 	//printInt("my Atoi",idx);
-	//print("Load Weights");
+	////print("Load Weights");
 	ConfigFile cfg = ConfigFile();
 	string cost_config_file="../Cache/ArcherWeights.cfg";
 	cfg.loadFile(cost_config_file);
@@ -647,7 +647,7 @@ void getLRWeights(int srcIdx, string name)
 {	
 	int idx = myAtoi(name);
 	//printInt("my Atoi",idx);
-	//print("Load Weights");
+	////print("Load Weights");
 	ConfigFile cfg = ConfigFile();
 	string cost_config_file="../Cache/ArcherWeights.cfg";
 	cfg.loadFile(cost_config_file);
@@ -682,9 +682,9 @@ void saveNNIfBestOrLoadBestWithNoise(int my_idx,float my_score)
 	float best_score = cfg.read_f32("BestScore");
 	if (my_score>best_score)
 	{
-		print("Name was "+Minds[my_idx].MYname);
+		//print("Name was "+Minds[my_idx].MYname);
 		Minds[my_idx].MYname="NN"+my_idx;
-		print("SAVING SCORE as "+Minds[my_idx].MYname);
+		//print("SAVING SCORE as "+Minds[my_idx].MYname);
 		cfg.add_f32("BestScore",my_score);
 		cfg.add_string("NameBest","NN"+my_idx);
 		cfg.saveFile(cost_config_file);
@@ -700,9 +700,9 @@ void saveNNIfBestOrLoadBestWithNoise(int my_idx,float my_score)
 void onInit(CBrain@ this)
 {
 	InitBrain(this);
-	print("Minds are "+Minds.length);
+	//print("Minds are "+Minds.length);
 	//Minds.insertLast(@NeuralNetwork(getBestMindName()));
-	print("SCORES:"+Array2String(goodArrows));
+	//print("SCORES:"+Array2String(goodArrows));
 	
 }
 
@@ -790,7 +790,7 @@ void UpdateBlob(CBlob@ blob, CBlob@ target, const u8 strategy)
 	int idx = myAtoi(blob.getPlayer().getUsername());
 	if (XORRandom(3)==0){
 		targets[idx]=target.getPosition();
-		//print("AI"+idx+" has as target"+target.getPlayer().getUsername());
+		////print("AI"+idx+" has as target"+target.getPlayer().getUsername());
 	}
 
 	Vec2f targetPos = target.getPosition();
@@ -840,8 +840,8 @@ Vec2f AIAiming(CBlob@ blob, CBlob @target)
 		//DeltaY = target.getPosition().y>=blob.getPosition().y ? Maths::Abs(DeltaY) : DeltaY;
 		/*
 		if (target.getPosition().x>blob.getPosition().x){
-			print("my target is at right");
-			print("mypos is "+blob.getPosition().x+" DeltaX should be positive and is "+DeltaX);
+			//print("my target is at right");
+			//print("mypos is "+blob.getPosition().x+" DeltaX should be positive and is "+DeltaX);
 		}
 		printFloat("Deltas",DeltaY);
 		printFloat("      ",DeltaX);
@@ -854,7 +854,7 @@ Vec2f AIAiming(CBlob@ blob, CBlob @target)
 			f32 aimFactor = 1.0f;
 			blob.setAimPos(blob.getBrain().getShootAimPosition(targetPos, hardShot, worthShooting, aimFactor));
 		}*/
-		//if (isVisible(blob,target)) print("difference from target pos is "+(target.getPosition()-targetPos).Length());
+		//if (isVisible(blob,target)) //print("difference from target pos is "+(target.getPosition()-targetPos).Length());
 		blob.setAimPos(targetPos);
 		return targetPos;
 		

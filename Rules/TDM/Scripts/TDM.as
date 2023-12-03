@@ -7,12 +7,7 @@
 #include "RulesCore.as";
 #include "RespawnSystem.as";
 #include "ArcherBrain.as"
-
-const int min_bots_per_team = 5;
-const f32 bots_to_ply_ratio = 1.0f;
-const int max_bots_per_team = 10;
-
-const int listener_frequency = 30; // every second
+#include "BotVars.as";
 
 //edit the variables in the config file below to change the basics
 // no scripting required!
@@ -234,7 +229,7 @@ shared class TDMSpawns : RespawnSystem
 
 		u32 tickspawndelay = u32(TDM_core.spawnTime);
 			
-//		print("ADD SPAWN FOR " + player.getUsername());
+//		//print("ADD SPAWN FOR " + player.getUsername());
 		TDMPlayerInfo@ info = cast < TDMPlayerInfo@ > (core.getInfoFromPlayer(player));
 
 		if (info is null) { warn("TDM LOGIC: Couldn't get player info  ( in void AddPlayerToSpawn(CPlayer@ player) )"); return; }
@@ -457,7 +452,7 @@ shared class TDMCore : RulesCore
 	//HELPERS
 	void allTeamsHaveKPlayers(int K)
 	{
-		//print("Adding "+K+" players in each team");
+		////print("Adding "+K+" players in each team");
 		int c = 0;
 		for (uint i = 0; i < teams.length; i++)
 		{
@@ -519,7 +514,7 @@ shared class TDMCore : RulesCore
 			}
 			if (victim.isBot())
 			{
-				print("GetBrain+DumpWeights");
+				//print("GetBrain+DumpWeights");
 				
 				//victim.getBlob().getBrain().dumpLRWeights();
 			}
@@ -857,7 +852,7 @@ shared class TDMCore : RulesCore
 
 void Reset(CRules@ this)
 {
-	printf("Restarting rules script: " + getCurrentScriptName());
+	//printf("Restarting rules script: " + getCurrentScriptName());
 	TDMSpawns spawns();
 	TDMCore core(this, spawns);
 	Config(core);
@@ -866,7 +861,6 @@ void Reset(CRules@ this)
 	this.set("start_gametime", getGameTime() + core.warmUpTime);
 	this.set_u32("game_end_time", getGameTime() + core.gameDuration); //for TimeToEnd.as
 	this.set_s32("restart_rules_after_game_time", (core.spawnTime < 0 ? 5 : 10) * 30 );
-	
 }
 
 void onRestart(CRules@ this)
@@ -874,24 +868,65 @@ void onRestart(CRules@ this)
 	Reset(this);
 }
 
+void onNewPlayerJoin(CRules@ this, CPlayer@ player)
+{
+	if (player is null || player.isBot()) return;
+	AddBot("Bot");
+}
+
+void onPlayerLeave(CRules@ this, CPlayer@ player)
+{
+	if (player is null || player.isBot()) return;
+
+	int ply_count = getPlayersCount();
+
+	s8 bot_team = this.get_u8("bot_team");
+
+	for (u8 i = 0; i < ply_count; i++)
+	{
+		CPlayer@ p = getPlayer(i);
+		if (p is null || p.getTeamNum() == this.getSpectatorTeamNum()) continue;
+
+		if (p.isBot() && p.getTeamNum() == bot_team)
+			KickPlayer(p);
+	}
+}
+
 void onInit(CRules@ this)
 {
 	Reset(this);
 }
 
+void AddFirstBots(CRules@ this)
+{
+	if (this.hasTag("had_first_bots")) return;
+
+	for (u8 i = 0; i < min_bots_per_team*2; i++)
+	{
+		AddBot("Bot");
+	}
+
+	this.Tag("had_first_bots");
+}
 
 void onTick(CRules@ this)
 {
+	if (this.hasTag("togglebots")) return;
 	if (getGameTime() % listener_frequency != 0) return;
 
-	int ply_count = getPlayersCount();
-	
-	u8 bots_ply_team = 0;
-	u8 bots = 0;
-	u8 plys = 0;
+	AddFirstBots(this); // causes null in localhost if set onInit()
+	info(this);
+}
 
-	u8 ply_team = this.get_u8("ply_team");
-	u8 bot_team = this.get_u8("bot_team");
+void info(CRules@ this)
+{
+	int ply_count = getPlayersCount();
+	s8 bots = 0;
+	s8 plys = 0;
+	s8 ply_bots = 0;
+
+	s8 ply_team = this.get_s8("ply_team");
+	s8 bot_team = this.get_u8("bot_team");
 
 	for (u8 i = 0; i < ply_count; i++)
 	{
@@ -900,20 +935,13 @@ void onTick(CRules@ this)
 
 		if (p.isBot())
 		{
-			if (p.getTeamNum() == bot_team)
-				bots++;
-			else
-				bots_ply_team++;
+			if (p.getTeamNum() == ply_team) ply_bots++;
+			else bots++;
 		}
 		else plys++;
 	}
-	
-	// 
-	// right
-	u8 request_bots_team_ply = Maths::Clamp(max_bots_per_team - (plys + bots), min_bots_per_team, max_bots_per_team);
-	u8 request_bots_team_bots= Maths::Clamp(bots-plys, min_bots_per_team, max_bots_per_team);
 
-	printf("r-ply: "+request_bots_team_ply+" r-bots: "+request_bots_team_bots);
+	printf("ply_team:"+ply_team+" bot_team:"+bot_team+" bots:"+bots+" plys:"+plys+" ply_bots:"+ply_bots);
 }
 
 void onRender(CRules@ this)

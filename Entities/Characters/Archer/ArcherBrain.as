@@ -115,7 +115,7 @@ array<float> gatherInput(CBlob@ blob,CBlob@ target,int IDXFORPRINTS){
 			
 			predictedOutput = predict(inpu[0],inpu[1],inpu[2],inpu[3],inpu[4],inpu[5],inpu[6],inpu[7]);
 			
-			//print("inpu "+Array2String(inpu)+" output "+Array2String(predictedOutput));
+			////print("inpu "+Array2String(inpu)+" output "+Array2String(predictedOutput));
 			midPoints[0] = pos1+Vec2f(inpu[0],inpu[1]);
 			for (int k=0;k<4;k++)
 				inpu[k]=predictedOutput[k];
@@ -173,7 +173,7 @@ array<float> FeedForward(int idx)
 	@nn = @Minds[idx];
 	array<float> static_inpr = array<float>(nn.Layer1[0].length-1,1);
 	pred = nn.predict(static_inpr);
-	//print("4");
+	////print("4");
 	return pred;
 }
 string Array2String(array<Vec2f> arr)
@@ -251,6 +251,9 @@ int NumArrows(CBlob@ this)
 	return -1;
 }
 void onRender(CSprite@ this){
+	return; ////////////
+
+
 	int idx,team;
 	if (this.getBlob().getPlayer() !is null){
 		idx = myAtoi(this.getBlob().getPlayer().getUsername());
@@ -303,7 +306,7 @@ void onRender(CSprite@ this){
 				//			pos1+Vec2f(predictedOutput[0],predictedOutput[1]),
 				//			SColor(0,255,(i%2==0 ? 255 : 0),255));
 
-				//print("inpu "+Array2String(inpu)+" output "+Array2String(predictedOutput));
+				////print("inpu "+Array2String(inpu)+" output "+Array2String(predictedOutput));
 				midPoints[0] = pos1+Vec2f(inpu[0],inpu[1]);
 				for (int k=0;k<4;k++)
 					inpu[k]=predictedOutput[k];
@@ -369,18 +372,18 @@ void onSetPlayer(CBlob@ this, CPlayer@ player)
 			flagDumped=0;
 			
 			int idx = myAtoi(player.getUsername());
-			print("epoch:"+epochs+") SETTING PLAYER AI"+idx);
+			//print("epoch:"+epochs+") SETTING PLAYER AI"+idx);
 			NeuralNetwork@ nn;
 			//string bm; getRules().get("BestMind",bm);
-			//print("MIND "+idx+" Is there now? "+(getRules().get("Mind"+idx,@nn))+" BEst MIND IS "+bm);
+			////print("MIND "+idx+" Is there now? "+(getRules().get("Mind"+idx,@nn))+" BEst MIND IS "+bm);
 			//getRules().get("Mind"+idx,@nn);
 			//if (!(getRules().get("Mind"+idx,@nn))){
 			//	getRules().set("Mind"+idx,@NeuralNetwork(12,8,2));
-			//	print("MIND"+idx+"Is there now? "+(getRules().get("Mind"+idx,@nn)));
+			//	//print("MIND"+idx+"Is there now? "+(getRules().get("Mind"+idx,@nn)));
 			//}
 			if (Minds[idx]==null){
 				
-				print("Init new NN for "+idx);
+				//print("Init new NN for "+idx);
 				if (getBestMindName() == "BN"+idx)
 					@Minds[idx] =@NeuralNetwork("BN"+idx);//@NeuralNetwork(14,8,2);// 
 				else
@@ -393,12 +396,12 @@ void onSetPlayer(CBlob@ this, CPlayer@ player)
 				}
 			}
 			else
-				print("epoch>0");
-			print("FF of "+idx+ " IS "+Array2String(FeedForward(idx)));
+				//print("epoch>0");
+			//print("FF of "+idx+ " IS "+Array2String(FeedForward(idx)));
 			targets[idx]=Vec2f_zero;
 			if (idx==0){
-				for (int i=0; i<goodArrows.length; i++)
-					print("Curr Score for "+i+" is"+(goodArrows[i]));///(1.0+arrowsShot[idx]));
+				for (int i=0; i<goodArrows.length; i++) {}
+					//print("Curr Score for "+i+" is"+(goodArrows[i]));///(1.0+arrowsShot[idx]));
 			}
 		}
 }
@@ -406,7 +409,7 @@ void onSetPlayer(CBlob@ this, CPlayer@ player)
 f32 onPlayerTakeDamage(CRules@ this, CPlayer@ victim, CPlayer@ attacker, f32 DamageScale)
 {
 	if (attacker !is null && attacker !is victim){
-		print("victim is"+victim.getUsername());
+		//print("victim is"+victim.getUsername());
 		print(attacker.getUsername()+" is the attacker");
 	}
 	return DamageScale;
@@ -426,11 +429,11 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
 */
 f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)
 {
-	if (hitterBlob.getName()=="arrow")
+	if (hitterBlob !is null && hitterBlob.getName()=="arrow")
 	{	
 		//print(this.getPlayer().getUsername()+" is this and hitter blob is "+hitterBlob.getName());
 		//print(this.getPosition()+" is position, "+velocity.Length()+" is the velocity "+ worldPoint+" is position ");
-		if (hitterBlob.getDamageOwnerPlayer().isBot())
+		if (hitterBlob.getDamageOwnerPlayer() !is null && hitterBlob.getDamageOwnerPlayer().isBot())
 		{	
 			int idx = myAtoi(hitterBlob.getDamageOwnerPlayer().getUsername());
 			float arrowDistance = Maths::Max(2.0f,(hitterBlob.getPosition()-targets[idx]).Length());
@@ -439,10 +442,10 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 				float targetDistance = (hitterBlob.getDamageOwnerPlayer().getBlob().getPosition()-targets[idx]).Length();
 				float multiplier = ((targetDistance*targetDistance)/(arrowDistance));
 				set_emote(hitterBlob.getDamageOwnerPlayer().getBlob(),"thumbsup");
-				/*print("arrow distance is "+arrowDistance);
-				print("target distance is "+targetDistance);
-				print("arrow distance is "+multiplier);*/
-				print("AI "+idx+"s arrow was worth "+multiplier);
+				/*//print("arrow distance is "+arrowDistance);
+				//print("target distance is "+targetDistance);
+				//print("arrow distance is "+multiplier);*/
+				//print("AI "+idx+"s arrow was worth "+multiplier);
 				{
 					goodArrows[idx]+=multiplier;
 					if (this.hasTag("dead")){
@@ -460,20 +463,20 @@ int flagDumped = 0;
 void onStateChange(CRules@ this, const u8 oldState)
 {
 	string LastMapName = "Maps/Talf.png";
-	print("GAME IS RUNNING? "+this.isMatchRunning()+", map is Last Map "+(getMap().getMapName()==(LastMapName))+" Map is: -"+getMap().getMapName()+"-");
+	//print("GAME IS RUNNING? "+this.isMatchRunning()+", map is Last Map "+(getMap().getMapName()==(LastMapName))+" Map is: -"+getMap().getMapName()+"-");
     if (this.isMatchRunning() && getMap().getMapName()==LastMapName)
     {
 		if (flagDumped!=0) return;
 		flagDumped=1;
 		epochs++;
 		if (epochs<=1) return;
-		//print("Minds are "+Minds.length);
+		////print("Minds are "+Minds.length);
 		//for(int i=0;i<Minds.length;i++){
 		//	if (Minds[i] is null) continue;
-		//	print("Mind is"+i);
+		//	//print("Mind is"+i);
 		//	Minds[i].printLayers();
 		//}
-		print("DUMPING SCORES");
+		//print("DUMPING SCORES");
 		
         CBlob@[] players;
 		getBlobsByTag("player", @players);
@@ -484,7 +487,7 @@ void onStateChange(CRules@ this, const u8 oldState)
 				int idx = myAtoi(player.getUsername());
 				float gain = (goodArrows[idx]);///(1.0+arrowsShot[idx]);
 				fitnessValues[idx] = gain;
-				print("new gain for "+player.getUsername()+" is "+gain);
+				//print("new gain for "+player.getUsername()+" is "+gain);
 				{
 					print(player.getUsername()+" has score "+fitnessValues[idx]);
 					saveNNIfBestOrLoadBestWithNoise(idx,gain);
@@ -531,9 +534,9 @@ void saveNNIfBestOrLoadBestWithNoise(int my_idx,float my_score)
 	@nn = Minds[my_idx];
 	if (my_score>best_score)
 	{
-		print("Name was "+nn.MYname);
+		//print("Name was "+nn.MYname);
 		nn.MYname="NN"+my_idx;
-		print("SAVING SCORE "+my_score+" for "+nn.MYname);
+		//print("SAVING SCORE "+my_score+" for "+nn.MYname);
 		cfg.add_f32("BestScore",my_score);
 		cfg.add_f32("Cycle",epochs);
 		cfg.add_f32("arrowsShot",arrowsShot[my_idx]);
@@ -703,18 +706,20 @@ void UpdateBlobVale(CBlob@ blob, CBlob@ target, const u8 strategy)
 		bool r2 = ( (possoTirareMED and TargetOnMEDTraj) ? true : false);
 		bool r3 = ( (possoTirareMIN and TargetOnMINTraj) ? true : false);
 		bool r4 = (!(r2 or r3 or r1));
-		float cosD = cosDist(blob.getAimPos()-blob.getPosition(),targetPos-blob.getPosition());
+
+		//float cosD = cosDist(blob.getAimPos()-blob.getPosition(),targetPos-blob.getPosition());
+
 		if ((XORRandom(10)==4 or !r4) and idx == argmax(goodArrows)){
 
-			print("\nInput IS"+Array2String(inpt4NN));
-			print("Ff for "+idx+" is "+Array2String(AIPREDICTION));		
-			print("cosDist is "+ cosD);
+			//print("\nInput IS"+Array2String(inpt4NN));
+			//print("Ff for "+idx+" is "+Array2String(AIPREDICTION));		
+			//print("cosDist is "+ cosD);
 
 				
-			print(currentAngle[idx]+" is lt "+inpt4NN[7]);
-			//print("r2"+r2+" r1:"+r1+" r3:"+r3+" IS "+r4);
-			//print("FIRE tIME" + (2.0+1.0*fTime)+"Min "+aaa2+" MED "+aaa1 + " MAX "+aaa3);
-			//print("PossoTirareMin "+possoTirareMIN+ " MED"+possoTirareMED+" MAX "+possoTirareMAX);
+			//print(currentAngle[idx]+" is lt "+inpt4NN[7]);
+			////print("r2"+r2+" r1:"+r1+" r3:"+r3+" IS "+r4);
+			////print("FIRE tIME" + (2.0+1.0*fTime)+"Min "+aaa2+" MED "+aaa1 + " MAX "+aaa3);
+			////print("PossoTirareMin "+possoTirareMIN+ " MED"+possoTirareMED+" MAX "+possoTirareMAX);
 		}
 		//if (cosD>0.99){
 		//	currentAngle[idx]= -PI/2.0-(3.0*PI)/2.0;// + Maths::ATan2(targetVector.x,targetVector.y);

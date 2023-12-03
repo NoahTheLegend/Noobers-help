@@ -26,7 +26,7 @@ int c =0;
 //blob functions
 void onInit(CBlob@ this)
 {	c+=1;
-	print(c+"th arrow");
+	//print(c+"th arrow");
 	positions.resize(0);
 	velocities.resize(0);
 	CShape@ shape = this.getShape();
@@ -135,9 +135,9 @@ void onTick(CBlob@ this)
 	CShape@ shape = this.getShape();
 
 	const u8 arrowType = this.get_u8("arrow type");
-	//print("I AM AN ARROW: MY POS IS "+this.getPosition()+" my spd is"+shape.getVelocity());
+	////print("I AM AN ARROW: MY POS IS "+this.getPosition()+" my spd is"+shape.getVelocity());
 	if (shape.vellen>0.001f){
-		//print("positions are"+Vec2fArray2String(positions));
+		////print("positions are"+Vec2fArray2String(positions));
 		//positions[0] = this.getPosition();
 		//velocities[0] = this.getVelocity();
 		positions.insertLast(this.getPosition());
@@ -250,7 +250,7 @@ void onTick(CBlob@ this)
 
 void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point1)
 {
-	print("MyPosition is"+this.getPosition());
+	//print("MyPosition is"+this.getPosition());
 	if (blob !is null && doesCollideWithBlob(this, blob) && !this.hasTag("collided"))
 	{
 		const u8 arrowType = this.get_u8("arrow type");

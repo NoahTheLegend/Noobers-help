@@ -28,7 +28,7 @@ void InitBrain(CBrain@ this)
 	// get a target so we start walking right away from the tent.
 	//SearchTarget(CBrain@ this, const bool seeThroughWalls = false, const bool seeBehindBack = true)
 	
-	print("Brain initialized.");
+	//print("Brain initialized.");
 
 	// set an aim position at random, and go there
 //	blob.setAimPos(Vec2f(XORRandom(int(map.tilemapwidth * map.tilesize)), XORRandom(int(map.tilemapheight * map.tilesize))));	
@@ -51,7 +51,7 @@ void InitBrain(CBrain@ this)
 				for (int i=0; i<flags2.length; ++i) { 
 					if ( flags2[i].getTeamNum() != blob.getTeamNum()  ) { 			
 						blob.getBrain().SetTarget(flags2[i]);			
-						print("Walking to enemy flag");						
+						//print("Walking to enemy flag");						
 						}
 					}
 
@@ -219,7 +219,7 @@ void JumpOverObstacles(CBlob@ blob)
 				for (int i=0; i<flags2.length; ++i) { 
 					if ( flags2[i].getTeamNum() != blob.getTeamNum()  ) { 			
 						blob.getBrain().SetTarget(flags2[i]);			
-						//print("Walking to enemy flag");						
+						////print("Walking to enemy flag");						
 						}
 					}
 
@@ -250,7 +250,7 @@ void JumpOverObstacles(CBlob@ blob)
 		// if stuck timer < 1, turn off retreat
 		if ( stuck_t < 1 ) {
 			blob.set_bool("goback", false);
-			print("goback OFF");
+			//print("goback OFF");
 		}		
 		
 		
@@ -398,7 +398,7 @@ void JumpOverObstacles(CBlob@ blob)
 		
 		if ( pstuck_t > max_stuck + XORRandom(12) ) {
 			// retreat.
-			print("MAX STUCK, moving back");
+			//print("MAX STUCK, moving back");
 			blob.set_s32("stuck_t", pstuck_t);			
 			blob.set_bool("goback", true);
 		}	

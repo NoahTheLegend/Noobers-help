@@ -60,7 +60,7 @@ float getComplexTrajectory(float ParV,float ParN,float g,float ParX)
 						arccosh(Maths::Sqrt(((k*v*v)/(m*g))*Maths::Sin(n)*Maths::Sin(n)+1.0)));
 	
 	t = (m/(k*v*Maths::Abs(Maths::Cos(n)))) * (Maths::Pow(EulerNum,(k*x)/m)-1.0);
-	//print(" b1 is "+b1+" b2 is "+b2+" t is "+t);
+	////print(" b1 is "+b1+" b2 is "+b2+" t is "+t);
 	if (0<t and t <b1)
 		result = (m/k)*Maths::Log(Maths::Cos(t*Maths::Sqrt((g*k)/m)-Maths::ATan(v*Maths::Sin(n) * Maths::Sqrt(k/(m*g))))) + 
 		(m/(2.0*k))*Maths::Log(((k*v*v)/(m*g))*(Maths::Sin(n)*Maths::Sin(n)+1));
@@ -101,7 +101,7 @@ Vec2f newParabolicFun(Vec2f pos1,Vec2f pos2,float v0,float t,float g)
 	return result;
 }
 float ParabolaPassantePerunPuntoDataLaTangentediX(Vec2f pos1,Vec2f pos2,float a,float x){
-	//print("pos1pos2"+pos1+" " +pos2);
+	////print("pos1pos2"+pos1+" " +pos2);
 	float b,c,q,m;
 	float x1 = pos1.x, y1 = pos1.y;
 	float x2 = pos2.x, y2 = pos2.y;
@@ -111,19 +111,19 @@ float ParabolaPassantePerunPuntoDataLaTangentediX(Vec2f pos1,Vec2f pos2,float a,
 	b = -2.0*a*x1+m;
 	
 	c = y1-a*x1*x1-b*x1;
-	//print("parabola is:"+a+"X^2 + "+b+"X + "+c);
+	////print("parabola is:"+a+"X^2 + "+b+"X + "+c);
 	return a*x*x+b*x+c;
 
 }
 float ParabolaPassanteperDuePuntidiX(Vec2f pos1,Vec2f pos2,float a,float x){
-	//print("pos1pos2"+pos1+" " +pos2);
+	////print("pos1pos2"+pos1+" " +pos2);
 	float b,c;
 	float x1 = pos1.x, y1 = pos1.y;
 	float x2 = pos2.x, y2 = pos2.y;
 	if (x1==x2) return x2;
 	b = (-y1+y2-a*(x2*x2-x1*x1))/(x2-x1);
 	c = y1-a*(x1*x1)-x1*b;
-	//print("parabola is:"+a+"X^2 + "+b+"X + "+c);
+	////print("parabola is:"+a+"X^2 + "+b+"X + "+c);
 	return a*x*x+b*x+c;
 
 }
@@ -137,7 +137,7 @@ float getAIBoolShot(CBlob@ blob,CBlob@ target,Vec2f aimPos)
 	bool verbose = false;// (XORRandom(1000)<10) && (idx==argmax(fitnessValues));
 	//printInt("my idx",idx);
 	array<float> ShotWeights = allShotWeights[idx];
-	//print("Shot weights");
+	////print("Shot weights");
 	//print(Array2String(ShotWeights));
 	float bias = ShotWeights[0];
 	float x1 = (1.0*blob.get_u32("fire time"))/(1.0*ArcherParams::shoot_period);
@@ -243,8 +243,8 @@ float getAIAim(CBlob@ blob,CBlob@ target)
 	if (verbose)
 	{			
 				string name = blob.getPlayer().getUsername();
-				print("I'AM "+name+" my score is "+maxim(fitnessValues));
-				print("Enemy is at "+(x10>0.0 ? "Left" : "Right")+" x9=" + x9);
+				//print("I'AM "+name+" my score is "+maxim(fitnessValues));
+				//print("Enemy is at "+(x10>0.0 ? "Left" : "Right")+" x9=" + x9);
 				array<float> inputLR = 
 				   {x1,
 					x2,
@@ -400,7 +400,7 @@ void onRender(CSprite@ this){
 															constGravity
 															);
 				corr = Vec2f(first.x + step*i,first.y-yy);
-				//print("step "+i+")prec is "+prec+" corr is "+corr);
+				////print("step "+i+")prec is "+prec+" corr is "+corr);
 				GUI::DrawLine(prec,corr, SColor(0,color_step*i*team,color_step*i,255));
 				
 				prec = corr;
@@ -429,7 +429,7 @@ void onRender(CSprite@ this){
 		//		print(iii+")"+simulatedTraj[iii]);
 		//	}
 		//	//print(Vec2fArray2String(simulatedTraj));
-		//	//print("theta is "+theta+"(angles)"+(theta/PI)*180+" tg is "+Maths::Tan(theta)+" Cos is"+Maths::Cos(theta));
+		//	////print("theta is "+theta+"(angles)"+(theta/PI)*180+" tg is "+Maths::Tan(theta)+" Cos is"+Maths::Cos(theta));
 		//
 		//
 		//for (int i=0; i< simulatedTraj.length-2;i++)
@@ -467,7 +467,7 @@ void onRender(CSprite@ this){
 				GUI::DrawLine(pos1+Vec2f(inpu[0],inpu[1]),
 							pos1+Vec2f(predictedOutput[0],predictedOutput[1]),
 							SColor(0,255,0,255));
-				//print("inpu "+Array2String(inpu)+" output "+Array2String(predictedOutput));
+				////print("inpu "+Array2String(inpu)+" output "+Array2String(predictedOutput));
 				for (int k=0;k<4;k++)
 					inpu[k]=predictedOutput[k];
 
@@ -525,12 +525,12 @@ void onSetPlayer(CBlob@ this, CPlayer@ player)
 			
 			player.setDeaths(0);
 			targets[idx]=Vec2f_zero;
-			/*print("I've GOT my shit set up " + player.getUsername());
+			/*//print("I've GOT my shit set up " + player.getUsername());
 			printFloat("Shot Wheights are",allShotWeights[idx].length);
 			printFloat("AIM Wheights are",allAimWeights[idx].length);
 			*/
 			if (idx==0){
-				print("SCORES:"+Array2String(fitnessValues));
+				//print("SCORES:"+Array2String(fitnessValues));
 			}
 		}
 }
@@ -538,7 +538,7 @@ void onSetPlayer(CBlob@ this, CPlayer@ player)
 f32 onPlayerTakeDamage(CRules@ this, CPlayer@ victim, CPlayer@ attacker, f32 DamageScale)
 {
 	if (attacker !is null && attacker !is victim){
-		print("victim is"+victim.getUsername());
+		//print("victim is"+victim.getUsername());
 		print(attacker.getUsername()+" is the attacker");
 	}
 	return DamageScale;
@@ -570,10 +570,10 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 			{
 				float targetDistance = (hitterBlob.getDamageOwnerPlayer().getBlob().getPosition()-targets[idx]).Length();
 				float multiplier = (targetDistance/(1.0+arrowDistance));
-				/*print("arrow distance is "+arrowDistance);
-				print("target distance is "+targetDistance);
-				print("arrow distance is "+multiplier);*/
-				print("AI "+idx+"s arrow was worth "+multiplier);
+				/*//print("arrow distance is "+arrowDistance);
+				//print("target distance is "+targetDistance);
+				//print("arrow distance is "+multiplier);*/
+				//print("AI "+idx+"s arrow was worth "+multiplier);
 				{
 					goodArrows[idx]+=multiplier;
 					if (this.hasTag("dead")){
@@ -604,7 +604,7 @@ void onStateChange(CRules@ this, const u8 oldState)
 				fitnessValues[idx] += gain;
 				arrowsShot[idx] = 0.0;
 				goodArrows[idx] = 0.0;
-				print("new gain for "+player.getUsername()+" is "+gain);
+				//print("new gain for "+player.getUsername()+" is "+gain);
 			} 
 		}
 				
@@ -643,7 +643,7 @@ array<float> AddNoiseToVec(array<float> arr,float divider)
 void getBestWeights(int idx)
 {	
 	/*printInt("my Atoi",idx);
-	print("Load Weights");*/
+	//print("Load Weights");*/
 	ConfigFile cfg = ConfigFile();
 	string cost_config_file="../Cache/ArcherWeights.cfg";
 	cfg.loadFile(cost_config_file);
@@ -668,7 +668,7 @@ void getBestWeights(int idx)
 void getBestWeightsWithNoise(int idx)
 {	
 	//printInt("my Atoi",idx);
-	//print("Load Weights");
+	////print("Load Weights");
 	ConfigFile cfg = ConfigFile();
 	string cost_config_file="../Cache/ArcherWeights.cfg";
 	cfg.loadFile(cost_config_file);
@@ -693,7 +693,7 @@ void getLRWeights(int srcIdx, string name)
 {	
 	int idx = myAtoi(name);
 	//printInt("my Atoi",idx);
-	//print("Load Weights");
+	////print("Load Weights");
 	ConfigFile cfg = ConfigFile();
 	string cost_config_file="../Cache/ArcherWeights.cfg";
 	cfg.loadFile(cost_config_file);
@@ -830,7 +830,7 @@ void UpdateBlob(CBlob@ blob, CBlob@ target, const u8 strategy)
 	int idx = myAtoi(blob.getPlayer().getUsername());
 	if (XORRandom(3)==0){
 		targets[idx]=target.getPosition();
-		//print("AI"+idx+" has as target"+target.getPlayer().getUsername());
+		////print("AI"+idx+" has as target"+target.getPlayer().getUsername());
 	}
 	
 	
@@ -901,8 +901,8 @@ Vec2f AIAiming(CBlob@ blob, CBlob @target)
 		//DeltaY = target.getPosition().y>=blob.getPosition().y ? Maths::Abs(DeltaY) : DeltaY;
 		/*
 		if (target.getPosition().x>blob.getPosition().x){
-			print("my target is at right");
-			print("mypos is "+blob.getPosition().x+" DeltaX should be positive and is "+DeltaX);
+			//print("my target is at right");
+			//print("mypos is "+blob.getPosition().x+" DeltaX should be positive and is "+DeltaX);
 		}
 		printFloat("Deltas",DeltaY);
 		printFloat("      ",DeltaX);
@@ -915,7 +915,7 @@ Vec2f AIAiming(CBlob@ blob, CBlob @target)
 			f32 aimFactor = 1.0f;
 			blob.setAimPos(blob.getBrain().getShootAimPosition(targetPos, hardShot, worthShooting, aimFactor));
 		}*/
-		//if (isVisible(blob,target)) print("difference from target pos is "+(target.getPosition()-targetPos).Length());
+		//if (isVisible(blob,target)) //print("difference from target pos is "+(target.getPosition()-targetPos).Length());
 		blob.setAimPos(targetPos);
 		return targetPos;
 		

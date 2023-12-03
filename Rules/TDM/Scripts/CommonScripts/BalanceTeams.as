@@ -2,10 +2,11 @@
 
 #include "BaseTeamInfo.as";
 #include "RulesCore.as";
+#include "BotVars.as";
 
 #define SERVER_ONLY
 
-const float PLAYER_TO_BOT_RATIO =  3.0f / 3.0f; // mice / BOTs
+const float PLAYER_TO_BOT_RATIO =  3.0f / 3.0f; // plys / BOTs
 
 void onInit(CRules@ this)
 {
@@ -16,8 +17,6 @@ void onInit(CRules@ this)
 
 void onRestart(CRules@ this)
 {
-	BalanceAll(this);
-
 	this.add_u32("match_count", 1);
 
 	Random@ r_seed = Random(Maths::Pow(this.get_u32("match_count"), 2));
@@ -25,12 +24,16 @@ void onRestart(CRules@ this)
 	int rnd = r_seed.NextRanged(100);
 	bool left = rnd < 50; // left team = players team
 
-	this.set_u8("ply_team_next", left ? 1 : 0);
-	this.set_u8("bot_team_next", left ? 0 : 1);
+	u8 ply_team = left ? 1 : 0;
+	u8 bot_team = left ? 0 : 1;
+
+	this.set_s8("ply_team", ply_team);
+	this.set_u8("bot_team", bot_team);
 
 	// always 0 ply 1 bot on first match
-	warn("current match teams: "+this.get_u8("ply_team")+" / bot "+this.get_u8("bot_team"));
-	warn("next match teams: ply "+this.get_u8("ply_team_next")+" / bot "+this.get_u8("bot_team_next"));
+	warn("current match teams: plys "+this.get_s8("ply_team")+" / bots "+this.get_u8("bot_team"));
+
+	BalanceAll(this);
 }
 
 void onNewPlayerJoin(CRules@ this, CPlayer@ player)
@@ -65,10 +68,23 @@ s32 getSmallestWeightedTeam(CPlayer@ player, BaseTeamInfo@[]@ teams)
 	if (player !is null)
 	{
 		CRules@ rules = getRules();
-		u8 ply_team = rules.get_u8("ply_team_next");
-		u8 bot_team = rules.get_u8("bot_team_next");
+		u8 ply_team = rules.get_s8("ply_team");
+		u8 bot_team = rules.get_u8("bot_team");
 		
-		int team = player.isBot() ? bot_team : ply_team;
+		int team = 0;
+		if (player.isBot())
+		{
+			player.server_setCharacterName("Enemy");
+			if (teams[bot_team].players_count > min_bots_per_team)
+			{
+				player.server_setCharacterName("Ally");
+				team = ply_team;
+			}
+			else team = bot_team;
+		}
+		else team = ply_team;
+
+
 		error("assigning new team to player: "+player.getUsername()+" "+team);
 		return team;
 	}
@@ -80,27 +96,17 @@ void BalanceAll(CRules@ this)
 {
 	getNet().server_SendMsg("Scrambling the teams...");
 
-	// this is running before onRestart(), probably even if i change code blocks order? will test
-	// yea probably, who knows kag, but the call order may be different in engine (for onrestart and something that runs balanceall())
-	if (this.exists("ply_team_next"))
-	{
-		this.set_u8("ply_team", this.get_u8("ply_team_next"));
-		this.set_u8("bot_team", this.get_u8("bot_team_next"));
-	}
-	else
-	{
-		this.set_u8("ply_team", 0);
-		this.set_u8("bot_team", 1);
-	}
-
 	RulesCore@ core;
 	this.get("core", @core);
+	CRules@ rules = getRules();
 
 	if(core !is null)
 	{
 		int playerCount = getPlayerCount();
 
 		string[] playerNames;
+
+		int remaining = 0;
 
 		for (int i = 0; i < playerCount; i++)
 		{
@@ -121,3 +127,4 @@ void BalanceAll(CRules@ this)
 		}
 	}
 }
+

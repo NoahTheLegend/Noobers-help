@@ -86,7 +86,7 @@ for h in hashData.keys():
             posY.append(-currentPred[0][1])
             velx.append(currentPred[0][2])
             vely.append(-currentPred[0][3])
-        #print("currentpred : ", currentPred)
+        #//print("currentpred : ", currentPred)
     #for i,position in enumerate(positions[:-1]):
     #    inputBigX.append(np.hstack([position,velocities[i]]))
         
@@ -101,7 +101,7 @@ plt.show()
 #print(rid.coef_)
 #print(poly.powers_)
 
-print("SCORE-"*5)
+//print("SCORE-"*5)
 print(clf.score(BigX,BigY))
 
 '''
