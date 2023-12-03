@@ -7,6 +7,13 @@
 #include "RulesCore.as";
 #include "RespawnSystem.as";
 #include "ArcherBrain.as"
+
+const int min_bots_per_team = 5;
+const f32 bots_to_ply_ratio = 1.0f;
+const int max_bots_per_team = 10;
+
+const int listener_frequency = 30; // every second
+
 //edit the variables in the config file below to change the basics
 // no scripting required!
 string cost_config_file = "tdm_vars.cfg";
@@ -450,14 +457,14 @@ shared class TDMCore : RulesCore
 	//HELPERS
 	void allTeamsHaveKPlayers(int K)
 	{
-		print("Adding "+K+" players in each team");
+		//print("Adding "+K+" players in each team");
 		int c = 0;
 		for (uint i = 0; i < teams.length; i++)
 		{
 			if ((K-teams[i].players_count)>0)
 				for (uint j = 0; j < K-teams[i].players_count; j++)
 				{
-					AddBot("AI"+c);
+					//AddBot("AI"+c);
 					c+=1;
 				}
 		}
@@ -870,4 +877,49 @@ void onRestart(CRules@ this)
 void onInit(CRules@ this)
 {
 	Reset(this);
+}
+
+
+void onTick(CRules@ this)
+{
+	if (getGameTime() % listener_frequency != 0) return;
+
+	int ply_count = getPlayersCount();
+	
+	u8 bots_ply_team = 0;
+	u8 bots = 0;
+	u8 plys = 0;
+
+	u8 ply_team = this.get_u8("ply_team");
+	u8 bot_team = this.get_u8("bot_team");
+
+	for (u8 i = 0; i < ply_count; i++)
+	{
+		CPlayer@ p = getPlayer(i);
+		if (p is null || p.getTeamNum() == this.getSpectatorTeamNum()) continue;
+
+		if (p.isBot())
+		{
+			if (p.getTeamNum() == bot_team)
+				bots++;
+			else
+				bots_ply_team++;
+		}
+		else plys++;
+	}
+	
+	// 
+	// right
+	u8 request_bots_team_ply = Maths::Clamp(max_bots_per_team - (plys + bots), min_bots_per_team, max_bots_per_team);
+	u8 request_bots_team_bots= Maths::Clamp(bots-plys, min_bots_per_team, max_bots_per_team);
+
+	printf("r-ply: "+request_bots_team_ply+" r-bots: "+request_bots_team_bots);
+}
+
+void onRender(CRules@ this)
+{
+	if (isClient() && isServer()) // debug
+	{
+		GUI::DrawText("", Vec2f(20, 300), SColor(255,255,255,0));
+	}
 }
