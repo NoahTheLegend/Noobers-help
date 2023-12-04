@@ -6,7 +6,8 @@
 
 #define SERVER_ONLY
 
-const float PLAYER_TO_BOT_RATIO =  3.0f / 3.0f; // plys / BOTs
+const float PLAYER_TO_BOT_RATIO =  1.0f; // used by old code
+const float BOT_RATIO_PER_PLAYER = 0.0f; // add N amount of bots (rounded to floor) per player, negative value works oppositely
 
 void onInit(CRules@ this)
 {
@@ -63,6 +64,8 @@ void onPlayerRequestTeamChange(CRules@ this, CPlayer@ player, u8 newTeam)
 	}
 }
 
+int fill = 0;
+
 s32 getSmallestWeightedTeam(CPlayer@ player, BaseTeamInfo@[]@ teams)
 {
 	if (player !is null)
@@ -75,10 +78,11 @@ s32 getSmallestWeightedTeam(CPlayer@ player, BaseTeamInfo@[]@ teams)
 		if (player.isBot())
 		{
 			player.server_setCharacterName("Enemy");
-			if (teams[bot_team].players_count > min_bots_per_team)
+			if (fill>0)
 			{
 				player.server_setCharacterName("Ally");
 				team = ply_team;
+				fill--;
 			}
 			else team = bot_team;
 		}
@@ -94,6 +98,15 @@ s32 getSmallestWeightedTeam(CPlayer@ player, BaseTeamInfo@[]@ teams)
 
 void BalanceAll(CRules@ this)
 {
+	s8 plys = 0;
+	for (u8 i = 0; i < getPlayersCount(); i++)
+	{
+		CPlayer@ p = getPlayer(i);
+		if (p is null || p.getTeamNum() == this.getSpectatorTeamNum() || p.isBot()) continue;
+		plys++;
+	}
+
+	fill = getPlayersCount()/2-plys-(Maths::Floor(f32(plys)*BOT_RATIO_PER_PLAYER));
 	getNet().server_SendMsg("Scrambling the teams...");
 
 	RulesCore@ core;
@@ -110,15 +123,14 @@ void BalanceAll(CRules@ this)
 
 		for (int i = 0; i < playerCount; i++)
 		{
-			playerNames.push_back(getPlayer(i).getUsername());
+			CPlayer@ p = getPlayer(i);
+			if (p.isBot()) playerNames.push_back(p.getUsername());
+			else playerNames.insertAt(0, p.getUsername());
 		}
 
-		for(int i = 0; i < playerCount; i++)
+		for(int i = 0; i < playerNames.size(); i++)
 		{
-			int playerIndex = XORRandom(playerCount - i);
-
-			CPlayer@ player = getPlayerByUsername(playerNames[playerIndex]);
-			playerNames.removeAt(playerIndex);
+			CPlayer@ player = getPlayerByUsername(playerNames[i]);
 
 			if (player.getTeamNum() != this.getSpectatorTeamNum())
 			{
